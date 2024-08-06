@@ -23,7 +23,7 @@ set(GLIST_CXX_FLAGS_COMMON
 list(APPEND GLIST_CXX_FLAGS_DEBUG -DDEBUG -O0 -g)
 list(APPEND GLIST_CXX_FLAGS_RELEASE -DEIGEN_NO_CUDA -DNDEBUG -O2)
 if(NOT APPLE)
-	set(GLIST_SHARED_LINKER_FLAGS "-v -pthread -Wl,--gc-sections")
+	set(GLIST_SHARED_LINKER_FLAGS "-v -pthread -Wl,--gc-sections -mwindows")
 endif()
 
 ##################################################
@@ -131,6 +131,7 @@ set(SRC_FILES
 	${ENGINE_DIR}/core/gRenderObject.cpp
 	${ENGINE_DIR}/core/gGUIActionManager.cpp
 	${ENGINE_DIR}/graphics/gTexture.cpp
+	${ENGINE_DIR}/graphics/gGrid.cpp
 	${ENGINE_DIR}/graphics/gImage.cpp
 	${ENGINE_DIR}/graphics/gSkybox.cpp
 	${ENGINE_DIR}/graphics/gNode.cpp
@@ -270,7 +271,7 @@ set(GENERATED_SHADERS_DIR "${GENERATED_HEADERS_DIR}/graphics/shaders" CACHE STRI
 file(MAKE_DIRECTORY ${GENERATED_SHADERS_DIR})
 file(GLOB_RECURSE SHADER_FILES "${SHADERS_DIR}/*.glsl")
 
-add_executable(ShaderToHeader ${ENGINE_DIR}/tools/ShaderToHeader.cpp)
+add_executable(GlistShaderToHeader ${ENGINE_DIR}/tools/ShaderToHeader.cpp)
 
 # Add a dependency to ensure the header file is generated before other targets
 foreach(SHADER_FILE ${SHADER_FILES})
@@ -279,7 +280,7 @@ foreach(SHADER_FILE ${SHADER_FILES})
 
 	add_custom_command(PRE_BUILD
 			OUTPUT ${GENERATED_HEADER_FILE}
-			COMMAND $<TARGET_FILE:ShaderToHeader> ${SHADER_FILE} ${GENERATED_HEADER_FILE}
+			COMMAND $<TARGET_FILE:GlistShaderToHeader> ${SHADER_FILE} ${GENERATED_HEADER_FILE}
 			DEPENDS ${SHADER_FILE}
 			COMMENT "Generating header file for ${SHADER_FILE} at ${GENERATED_HEADER_FILE}"
 	)
