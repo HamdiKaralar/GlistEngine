@@ -23,7 +23,10 @@ set(GLIST_CXX_FLAGS_COMMON
 list(APPEND GLIST_CXX_FLAGS_DEBUG -DDEBUG -O0 -g)
 list(APPEND GLIST_CXX_FLAGS_RELEASE -DEIGEN_NO_CUDA -DNDEBUG -O2)
 if(NOT APPLE)
-	set(GLIST_SHARED_LINKER_FLAGS "-v -pthread -Wl,--gc-sections -mwindows")
+	set(GLIST_SHARED_LINKER_FLAGS "-v -pthread -Wl,--gc-sections")
+endif()
+if(WIN32)
+	set(GLIST_SHARED_LINKER_FLAGS "${GLIST_SHARED_LINKER_FLAGS} -mwindows")
 endif()
 
 ##################################################
@@ -120,6 +123,7 @@ set(SRC_FILES
 	${ENGINE_DIR}/graphics/particles/gFireParticles.cpp
 	${ENGINE_DIR}/base/gBaseParticles.cpp
 	${ENGINE_DIR}/types/gColor.cpp
+	${ENGINE_DIR}/core/gGUIAppThread.cpp
 	${ENGINE_DIR}/utils/gThread.cpp
 	${ENGINE_DIR}/utils/gUtils.cpp
 	${ENGINE_DIR}/utils/gFile.cpp
@@ -284,7 +288,7 @@ foreach(SHADER_FILE ${SHADER_FILES})
 			DEPENDS ${SHADER_FILE}
 			COMMENT "Generating header file for ${SHADER_FILE} at ${GENERATED_HEADER_FILE}"
 	)
-	list(APPEND SRC_FILES ${GENERATED_HEADER_FILE})
+	list(PREPEND SRC_FILES ${GENERATED_HEADER_FILE})
 endforeach()
 
 add_custom_target(
